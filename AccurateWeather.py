@@ -24,7 +24,7 @@ mac = ("611809f5301e49d7", "613474bc4b2241d7", "5d7132651f1711d7", "614b47911537
         "613474bc151d41d7", "5d713265181611d7")  
 
 dict_dev = dict(zip(Station_number, mac))
-st.write(dict_dev)
+# st.write(dict_dev)
 
 update = 0
 df = 0
