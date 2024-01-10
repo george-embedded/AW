@@ -3,7 +3,9 @@ import requests
 import pandas as pd
 import numpy as np
 import json
-import time
+
+from st_aggrid import AgGrid, DataReturnMode, GridUpdateMode, GridOptionsBuilder, ColumnsAutoSizeMode
+
 
 st.set_page_config(page_title="Plotting Demo", page_icon="📈")
 
@@ -41,21 +43,7 @@ if selectboxT:
     df = pd.DataFrame(res_data["data"])
     df = df.drop(["device_name", "device_type_name","attribute_id"], axis=1)
     # 将 "time" 列中的时间戳转换为格式化的日期时间字符串
-    df["time"] = pd.to_datetime(df["time"], unit="ms")  # 假设时间戳是以毫秒为单位的
-
-
-# selectbox1 = st.selectbox("设备桩号", mac)
-# if selectbox1:
-#     url = url+selectbox1
-#     st.write(url)
-#     response = requests.get(url)
-#     res_data = json.loads(response.text)
-#     st.markdown("---")
-#     update = 1
-#     df = pd.DataFrame(res_data["data"])
-#     df = df.drop(["device_name", "device_type_name","attribute_id"], axis=1)
-#     # 将 "time" 列中的时间戳转换为格式化的日期时间字符串
-#     df["time"] = pd.to_datetime(df["time"], unit="ms")  # 假设时间戳是以毫秒为单位的    
+    df["time"] = pd.to_datetime(df["time"], unit="ms", utc=True).dt.tz_convert('Asia/Shanghai')  # 假设时间戳是以毫秒为单位的 
 
 if st.button("刷新"):
     response = requests.get(url)
@@ -73,7 +61,14 @@ if st.button("刷新"):
 if update == 1:
     update = 0
     # 使用 st.dataframe 显示带有样式的 DataFrame
-    st.table(df)
+    # st.table(df)
+
+    AgGrid(
+        df,
+        fit_colums_on_grid_load=True,
+        columns_auto_size_mode=ColumnsAutoSizeMode.FIT_ALL_COLUMNS_TO_VIEW,
+    )
+
+show_raw_data =  st.checkbox("显示原始数据")
+if show_raw_data:
     st.json(res_data)
-
-
